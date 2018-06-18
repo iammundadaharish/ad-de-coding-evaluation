@@ -22,15 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <javax.interceptor.version>1.2</javax.interceptor.version>
-        <!-- Fix for linkTo performance issues: https://github.com/spring-projects/spring-hateoas/issues/525 -->
-        <spring-hateoas.version>0.23.0.RELEASE</spring-hateoas.version>
-        <dbunit.version>2.5.3</dbunit.version>
-        <jjwt.version>0.7.0</jjwt.version>
-        <jjschema.version>1.0</jjschema.version>
-        <json-schema-validator.version>2.2.6</json-schema-validator.version>
-        <json-schema-core.version>1.2.5</json-schema-core.version>
-        <guava.version>21.0</guava.version>
-        <tomcat.version>8.5.5</tomcat.version>
+        
     </properties>
 
     <dependencies>
@@ -97,12 +89,7 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.dbunit</groupId>
-            <artifactId>dbunit</artifactId>
-            <version>${dbunit.version}</version>
-            <scope>test</scope>
-        </dependency>
+        
     </dependencies>
     <build>
         <plugins>
