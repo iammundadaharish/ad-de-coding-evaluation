@@ -14,7 +14,7 @@ spring:
   application:
     name: ad-de-evaluation
   datasource:
-    url: jdbc:mysql://localhost:3306/ad_de_evaluation1?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/ad_de_evaluation?createDatabaseIfNotExist=true
     username: root
     password: rootroot
     type: com.zaxxer.hikari.HikariDataSource

@@ -7,7 +7,7 @@ import com.shri.ad.de.vo.HourlyStatsVO;
 
 public interface HourlyStatsService {
 	
-	void logRequestStatsByCustomerAndStatus(CollectorServiceConfiguration config,String status);
+	void logRequestStatsByCustomerAndStatus(CollectorServiceConfiguration config,Long customerId,String status);
 	
 	List<HourlyStatsVO> generateStatsByCustomerAndStatus(Long customerId,String requestDate);
 

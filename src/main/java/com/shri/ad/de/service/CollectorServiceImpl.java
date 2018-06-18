@@ -18,6 +18,7 @@ import com.shri.ad.de.repository.CustomerRepository;
 import com.shri.ad.de.repository.IPBlacklistRepository;
 import com.shri.ad.de.repository.IncomingRequestRepository;
 import com.shri.ad.de.repository.UserAgentRepository;
+import com.shri.ad.de.util.Constants;
 import com.shri.ad.de.vo.CollectorServiceConfiguration;
 
 @Service
@@ -40,23 +41,23 @@ public class CollectorServiceImpl implements CollectorService {
 
 
 	@Override
-	public IncomingRequestEntity validateAndSaveIncomingRequest(String userAgent,CollectorServiceConfiguration config) {
+	public IncomingRequestEntity validateAndSaveIncomingRequest(String userAgent,Long customerId,CollectorServiceConfiguration config) {
 		if(uar.findByUA(userAgent) != null){
-			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,"INVALID");   
-			throw new UserAgentBlacklistedException("User Agent is blacklisted");
+			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,customerId,Constants.STATUS_INVALID);   
+			throw new UserAgentBlacklistedException(Constants.STATUS_MSG_USER_AGENT_BLACKLISTED);
 	       }
-		Optional<CustomerEntity> crEntity = customerRepository.findById(config.getCustomerID());
+		Optional<CustomerEntity> crEntity = customerRepository.findById(customerId);
 		if(!crEntity.isPresent()) {
-    		throw new CustomerNotFoundException("Customer Id not found",config);
+    		throw new CustomerNotFoundException(Constants.STATUS_MSG_CUSTOMER_NOT_FOUND,config);
     	}else if(!crEntity.get().isActive()){
-    		hourlyStatsService.logRequestStatsByCustomerAndStatus(config,"INVALID");
-    		throw new CustomerInActiveException("Customer is not active",config);
+    		hourlyStatsService.logRequestStatsByCustomerAndStatus(config,customerId,Constants.STATUS_INVALID);
+    		throw new CustomerInActiveException(Constants.STATUS_MSG_INACTIVE_CUSTOMER,config);
     	}
 		
 		Optional<IPBlacklistEntity> ipEntity = ipBlacklistRepository.findByIp(config.getRemoteIP().replaceAll("\\.", ""));
 		if(ipEntity.isPresent()) {
-			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,"INVALID");
-			throw new IPBlacklistedException("Ip address is blacklisted",config);
+			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,customerId,Constants.STATUS_INVALID);
+			throw new IPBlacklistedException(Constants.STATUS_MSG_IP_ADDRESS_BLACKLISTED,config);
 		}
 
 		IncomingRequestEntity ire;
@@ -68,9 +69,9 @@ public class CollectorServiceImpl implements CollectorService {
 			ire.setUserId(config.getUserID());
 			ire.setTagId(config.getTagID());
 			ire = incomingRequestRepository.save(ire);
-			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,"VALID");
+			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,customerId,Constants.STATUS_VALID);
 		} catch (Exception e) {
-			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,"INVALID");
+			hourlyStatsService.logRequestStatsByCustomerAndStatus(config,customerId,Constants.STATUS_INVALID);
 			throw new UnprocessableEntityException(e.getMessage());		
 		}
 		

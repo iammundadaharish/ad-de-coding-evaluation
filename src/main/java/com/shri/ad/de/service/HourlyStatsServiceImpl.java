@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.shri.ad.de.domain.HourlyStatsEntity;
 import com.shri.ad.de.repository.CustomerRepository;
 import com.shri.ad.de.repository.HourlyStatsRepository;
+import com.shri.ad.de.util.Constants;
 import com.shri.ad.de.vo.CollectorServiceConfiguration;
 import com.shri.ad.de.vo.HourlyStatsVO;
 
@@ -25,17 +26,17 @@ public class HourlyStatsServiceImpl implements HourlyStatsService {
 	CustomerRepository customerRepository;
 
 	@Override
-	public void logRequestStatsByCustomerAndStatus(CollectorServiceConfiguration config,String status) {
+	public void logRequestStatsByCustomerAndStatus(CollectorServiceConfiguration config,Long customerId,String status) {
 	Calendar calendar = GregorianCalendar.getInstance();
 	calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR),0);
 	calendar.set(Calendar.SECOND,0);
 	calendar.set(Calendar.MILLISECOND, 0);
 	Timestamp currentHourTimestamp = new Timestamp(calendar.getTimeInMillis());
 	
-	Optional<HourlyStatsEntity> hse	= hourlyStatsRepository.findByCustomerIdAndTime(config.getCustomerID(), currentHourTimestamp);
+	Optional<HourlyStatsEntity> hse	= hourlyStatsRepository.findByCustomerIdAndTime(customerId, currentHourTimestamp);
 	if(hse.isPresent()){
 		HourlyStatsEntity entity = hse.get();
-		if("INVALID".equalsIgnoreCase(status)) {
+		if(Constants.STATUS_INVALID.equalsIgnoreCase(status)) {
 			entity.setInvalidCount(entity.getInvalidCount()+1);
 		}
 		else{
@@ -45,8 +46,8 @@ public class HourlyStatsServiceImpl implements HourlyStatsService {
 		
 	}else{
 		HourlyStatsEntity entity = new HourlyStatsEntity();
-		entity.setCustomer(customerRepository.findOne(config.getCustomerID()));
-		if("INVALID".equalsIgnoreCase(status)) {
+		entity.setCustomer(customerRepository.findOne(customerId));
+		if(Constants.STATUS_INVALID.equalsIgnoreCase(status)) {
 			entity.setInvalidCount(1L);
 			entity.setRequestCount(0L);
 		}else{
@@ -60,7 +61,7 @@ public class HourlyStatsServiceImpl implements HourlyStatsService {
 
 	@Override
 	public List<HourlyStatsVO> generateStatsByCustomerAndStatus(Long customerId,String requestDate) {
-		if("ALL".equalsIgnoreCase(requestDate)){
+		if(Constants.ALL.equalsIgnoreCase(requestDate)){
 			return hourlyStatsRepository.findByCustomerId(customerId);
 		}else{
 			return hourlyStatsRepository.findByCustomerIdAndRequestDate(customerId, requestDate);

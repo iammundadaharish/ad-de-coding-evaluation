@@ -24,6 +24,7 @@ import com.shri.ad.de.domain.IncomingRequestEntity;
 import com.shri.ad.de.exception.MalformedJsonException;
 import com.shri.ad.de.service.CollectorService;
 import com.shri.ad.de.service.HourlyStatsService;
+import com.shri.ad.de.util.Constants;
 import com.shri.ad.de.vo.CollectorServiceConfiguration;
 import com.shri.ad.de.vo.HourlyStatsVO;
 
@@ -46,24 +47,24 @@ public class CollectorServiceController {
 	 * @param incomingRequest valid json 
 	 * @return IncomingRequestEntity stored
 	 ***/
-	@RequestMapping(value = "collect", method = RequestMethod.POST)
+	@RequestMapping(value = "customer/{customerId}/collect", method = RequestMethod.POST)
 	public ResponseEntity<IncomingRequestEntity> acceptRequest(@RequestHeader(value = "User-Agent") String userAgent,
-			@Valid @RequestBody String incomingRequest) {
+			@PathVariable Long customerId,@Valid @RequestBody String incomingRequest) {
 		CollectorServiceConfiguration configuration = null;
 		IncomingRequestEntity ire = null;
 		try {
 			configuration = objectMapper.readValue(incomingRequest,
 					CollectorServiceConfiguration.class);
-			ire = collectorService.validateAndSaveIncomingRequest(userAgent, configuration);
+			ire = collectorService.validateAndSaveIncomingRequest(userAgent, customerId,configuration);
 
 		} catch (JsonParseException e) {
-			hourlyStatsService.logRequestStatsByCustomerAndStatus(configuration,"INVALID");
+			hourlyStatsService.logRequestStatsByCustomerAndStatus(configuration,customerId,Constants.STATUS_INVALID);
 			throw new MalformedJsonException("Input request json is malformed");
 		} catch (JsonMappingException e) {
-			hourlyStatsService.logRequestStatsByCustomerAndStatus(configuration,"INVALID");
+			hourlyStatsService.logRequestStatsByCustomerAndStatus(configuration,customerId,Constants.STATUS_INVALID);
 			throw new MalformedJsonException("Input request json is malformed");
 		} catch (IOException e) {
-			hourlyStatsService.logRequestStatsByCustomerAndStatus(configuration,"INVALID");
+			hourlyStatsService.logRequestStatsByCustomerAndStatus(configuration,customerId,Constants.STATUS_INVALID);
 			e.printStackTrace();
 		}
 
