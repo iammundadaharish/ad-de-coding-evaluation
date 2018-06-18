@@ -1,0 +1,4 @@
+databaseChangeLog:
+- include:
+    file: artifacts/ad_de_evaluation.yml
+    relativeToChangelogFile: true

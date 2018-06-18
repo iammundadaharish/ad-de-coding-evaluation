@@ -1,0 +1,187 @@
+databaseChangeLog:
+- changeSet:
+    id: 20180618-001
+    author: shri
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+            name: id
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueBoolean: false
+            name: active
+            type: BIT
+        tableName: customer
+- changeSet:
+    id: 20180618-002
+    author: shri
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+            name: id
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: customer_id
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: tag_id
+            type: BIGINT UNSIGNED    
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: varchar(255)
+        - column:
+            constraints:
+              nullable: false
+            name: remote_ip
+            type: VARCHAR(255)     
+        - column:
+            constraints:
+              nullable: false
+            name: time
+            type: TIMESTAMP    
+        tableName: incoming_request
+- changeSet:
+    id: 20180618-003
+    author: shri
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+            name: id
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: customer_id
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: request_count
+            type: BIGINT UNSIGNED    
+        - column:
+            constraints:
+              nullable: false
+            name: invalid_count
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: time
+            type: TIMESTAMP    
+        tableName: hourly_stats
+- changeSet:
+    id: 20180618-004
+    author: shri
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: customer_id
+        baseTableName: hourly_stats
+        constraintName: FK_hourly_stats_customer_id
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: customer
+    - addUniqueConstraint:
+        columnNames: customer_id, time
+        constraintName: unique_customer_time
+        tableName: hourly_stats
+- changeSet:
+    id: 20180618-005
+    author: shri
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+            name: id
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: ip
+            type: BIGINT UNSIGNED
+        tableName: ip_blacklist
+- changeSet:
+    id: 20180618-006
+    author: shri
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+            name: id
+            type: BIGINT UNSIGNED
+        - column:
+            constraints:
+              nullable: false
+            name: ua
+            type: VARCHAR(255)
+        tableName: ua_blacklist
+- changeSet:
+    id: 20180618-007
+    author: shri
+    runOnChange: true
+    changes:
+    - sql:
+        sql: |-
+          INSERT INTO `customer` ( `name`, `active`)
+          VALUES
+          ( 'Big News Media Corp', 1),
+          ( 'Online Mega Store', 1),
+          ( 'Nachoroo Delivery', 0),
+          ( 'Euro Telecom Group', 1)
+- changeSet:
+    id: 20180618-008
+    author: shri
+    runOnChange: true
+    changes:
+    - sql:
+        sql: |-
+          INSERT INTO `ip_blacklist` (`ip`)
+          VALUES
+          (0),
+          (2130706433),
+          (4294967295)
+- changeSet:
+    id: 20180618-009
+    author: shri
+    runOnChange: true
+    changes:
+    - sql:
+        sql: |-
+          INSERT INTO `ua_blacklist` (`ua`)
+          VALUES
+            ( 'A6-Indexer'),
+            ( 'Googlebot-News'),
+            ( 'Googlebot')

@@ -1,0 +1,44 @@
+server:
+  port: 9002
+
+debug: false
+
+spring:
+  jackson:
+    serialization:
+      fail-on-empty-beans : false
+  jmx:
+    enabled: false
+  profiles:
+    active: local
+  application:
+    name: ad-de-evaluation
+  datasource:
+    url: jdbc:mysql://localhost:3306/ad_de_evaluation1?createDatabaseIfNotExist=true
+    username: root
+    password: rootroot
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      pool-name: ad-de-evaluation
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show-sql: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+          order_inserts: true
+          order_updates: true
+          
+security:
+  basic:
+    enabled: false
+logging:
+  config: classpath:logback-local.xml
+liquibase:
+  change-log: classpath:/db/changelog/changelog-master.yml
