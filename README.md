@@ -19,7 +19,10 @@ curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data @blacklistediprequest.json http://localhost:9002/api/v1/customer/2/collect
 6. To submit with a non existent customer id:
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data @invalidcustomeridrequest.json http://localhost:9002/api/v1/customer/100/collect
-GET APIs
+
+
+GET APIs -- PLEASE NOTE THAT THE GET STATS APIs ARE AGGREGATED BY DAY
+
 1. To get stats for all days for a given customer id:
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://localhost:9002/api/v1/customer/2/requestDate/ALL/stats
 
